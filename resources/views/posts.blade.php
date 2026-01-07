@@ -1,6 +1,16 @@
 @extends('layouts.main')
 
 @section('container')
-    <h1>blog</h1>
-    <script src="js/script.js"></script>
+   
+    @foreach ($posts as $post)
+    <article class="mb-5">
+        <article>
+        <h2>
+           <a href="/posts/{{$post->slug}}">{{ $post->title }}</a> </h2>
+        <p>{{ $post->excerpt }}</p>
+     </article>   
+    @endforeach
+
 @endsection
+
+
