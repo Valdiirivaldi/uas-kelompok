@@ -78,6 +78,7 @@
     <div class="container p-0">
         <div class="row">
             @foreach ($posts->skip(1) as $post)
+<<<<<<< Updated upstream
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm h-100">
                     <div class="position-absolute px-3 py-2 text-white category-badge">
@@ -99,6 +100,22 @@
                         
                         <a href="/posts/{{ $post->slug }}" class="btn btn-primary mt-auto">Read more</a>
                     </div>
+=======
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="position-absolute bg-dark px-2 py-1 text-white">{{ $post->category->name }}</div>
+                    <img src="..." class="card-img-top" alt="...">
+                        <div class="card-body">g
+                            <h5 class="card-title">{{ $post->title }}</h5>
+                            <p>
+                                <small class="text-muted">
+                                    By. <a href="/authors/{{$post->author->username}}"class="text-decoration-none">{{ $post->author->name }}</a> {{ $post->created_at->diffForHumans() }}
+                                </small>
+                            </p>
+                            <p class="card-text">{{ $post->excerpt }}</p>
+                            <a href="/posts/{{$post->slug}}" class="btn btn-primary">Read more</a>
+                        </div>
+>>>>>>> Stashed changes
                 </div>
             </div>
             @endforeach
