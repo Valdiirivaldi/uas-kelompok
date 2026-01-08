@@ -5,47 +5,51 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
+    
+    <!-- LEFT MENU -->
+    <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link {{ ($active ?? '') === 'home' ? 'active' : '' }}" href="/">Home</a>
+            <a class="nav-link {{ ($active ?? '') === 'home' ? 'active' : '' }}" href="/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ ($active ?? '') === 'about' ? 'active' : '' }}" href="/about">About</a>
+            <a class="nav-link {{ ($active ?? '') === 'about' ? 'active' : '' }}" href="/about">About</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ ($active ?? '') === 'posts' ? 'active' : '' }}" href="/posts">Blog</a>
+            <a class="nav-link {{ ($active ?? '') === 'posts' ? 'active' : '' }}" href="/posts">Blog</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ ($active ?? '') === 'categories' ? 'active' : '' }}" href="/categories">Categories</a>
+            <a class="nav-link {{ ($active ?? '') === 'categories' ? 'active' : '' }}" href="/categories">Categories</a>
         </li>
-      </ul>
+    </ul>
 
-     <ul>
-      @auth
-      <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Welcom back, {{ auth()->user()->name }}
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/dashboard">My Dashboard</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <form action="/logout" method="post">
-              @csrf
-              <button type="submit" class="dropdown-item">Logout</button>
-            </form>
-          </ul>
-        </li>
-      @else  
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a href="/login" class="nav-link"><i class="bi bi-arrow-bar-right"></i>
-            Login</a>
-        </li>
-      </ul>
-      @endauth
-      </ul>
-      
+    <!-- RIGHT MENU -->
+    <ul class="navbar-nav ms-auto">
+        @auth
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    Welcome back, {{ auth()->user()->name }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="/dashboard">My Dashboard</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form action="/logout" method="post">
+                            @csrf
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </li>
+        @else
+            <li class="nav-item">
+                <a href="/login" class="nav-link">
+                    <i class="bi bi-arrow-bar-right"></i> Login
+                </a>
+            </li>
+        @endauth
+    </ul>
+
     </div>
+
   </div>
 </nav>
