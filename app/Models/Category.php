@@ -15,6 +15,10 @@ class Category extends Model
     {
         return $this->hasMany(Post::class);
     }
+
+    // TAMBAHKAN INI: Agar URL dashboard/categories/{category:slug}/edit dikenali
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }
-
-
