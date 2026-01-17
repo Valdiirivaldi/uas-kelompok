@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     {{-- Menggunakan $title atau default 'WPU Blog' jika tidak ada --}}
-    <title>{{ $title ?? 'WPU Blog' }}</title>
+    <title>{{ $title ?? 'Blog Uas' }}</title>
 
     {{-- Bootstrap CSS (Versi 5.3.3 Stabil) --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
