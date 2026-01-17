@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DashboardPostController;
 use App\Http\Controllers\AdminCategoryController; // Pastikan controller ini ada nanti
 
@@ -67,9 +68,9 @@ Route::middleware(['auth'])->group(function() {
 
 // --- 4. HALAMAN KHUSUS ADMIN (Hanya is_admin = 1) ---
 Route::middleware(['admin'])->group(function() {
-    
-    // Tambahkan ini untuk auto-slug kategori
     Route::get('/dashboard/categories/checkSlug', [AdminCategoryController::class, 'checkSlug']);
-    
     Route::resource('/dashboard/categories', AdminCategoryController::class)->except('show');
+    
+    // Gabungkan menjadi satu baris ini saja:
+    Route::resource('/dashboard/users', AdminUserController::class)->only(['index', 'destroy', 'update']);
 });

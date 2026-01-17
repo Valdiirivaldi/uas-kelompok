@@ -48,4 +48,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+    // Tambahkan ini di dalam class User sebelum penutup kurung kurawal }
+public function getRouteKeyName()
+{
+    return 'username';
+}
 }
