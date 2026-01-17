@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -15,31 +14,36 @@ class LoginController extends Controller
             'active' => 'login'
         ]);
     }
+
     public function authenticate(Request $request)
-{
-    // 1. Simpan hasil validasi ke dalam variabel $credentials
-    $credentials = $request->validate([
-        'email' => 'required|email:dns',
-        'password' => 'required'
-    ]);
+    {
+        // 1. Validasi Input
+        $credentials = $request->validate([
+            // Jika develop offline (tanpa internet), hapus ':dns' agar tidak error
+            'email' => 'required|email:dns', 
+            'password' => 'required'
+        ]);
 
-    // 2. Sekarang $credentials sudah berisi array ['email' => '...', 'password' => '...']
-    if(Auth::attempt($credentials)) {
-        $request->session()->regenerate();
+        // 2. Coba Login
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-        return redirect()->intended('/dashboard');
+            // [REVISI PENTING] 
+            // Paksa redirect ke dashboard secara langsung
+            return redirect('/dashboard');
+        }
+
+        // 3. Jika Gagal
+        return back()->with('loginError', 'Login Gagal! Silakan cek kembali email dan password Anda.');
     }
 
-    return back()->with('loginError', 'Login Gagal! Silakan cek kembali email dan password Anda.');
-}
-public function logout(Request $request)
-{
-    Auth::logout();
+    public function logout(Request $request)
+    {
+        Auth::logout();
 
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-    return redirect('/login');
-
-}
+        return redirect('/login');
+    }
 }

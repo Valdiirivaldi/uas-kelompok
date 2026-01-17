@@ -2,31 +2,66 @@
 
 @section('container')
 
-    <div class="container">
-        <div class="row justify-content-center mb-5">
-           <div class="col-md-8">
-            <h1 class="mb-3">{{ $post->title }}</h1>
+<div class="container">
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8">
+            
+            {{-- Navigasi Atas --}}
+            <div class="mb-4">
+                 <a href="/posts" class="text-decoration-none text-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to posts
+                 </a>
+            </div>
 
-            <p>By. <a href="/posts?author={{ $post->author->username }}" class="text-decoration-none">
-            {{ $post->author->name }}
-        </a> 
-        in 
-        <a href="/posts?category={{ $post->category->slug }}" class="text-decoration-none">
-            {{ $post->category->name }} </a></p>
+            {{-- Judul Postingan --}}
+            <h1 class="mb-3 fw-bold display-5">{{ $post->title }}</h1>
+            
+            {{-- Meta Info (Penulis & Kategori) --}}
+            <div class="d-flex align-items-center mb-4 text-muted border-bottom pb-3">
+                <span class="me-2">By</span>
+                <a href="/posts?author={{ $post->author->username }}" class="text-decoration-none fw-bold text-dark me-2">
+                    {{ $post->author->name }}
+                </a> 
+                <span class="me-2">in</span> 
+                <a href="/posts?category={{ $post->category->slug }}" class="badge bg-secondary text-decoration-none">
+                    {{ $post->category->name }}
+                </a>
+                <span class="mx-2">•</span> 
+                <span>{{ $post->created_at->format('d F Y') }}</span>
+            </div>
 
-        <img src="{{ asset('img/gambar1.jpg') }}" alt="{{ $post->category->name }}" class="img-fluid">
-         <article class="my-3 fs-4">
-               {!! $post->body !!} 
-        </article>   
+            {{-- Featured Image (Gambar Utama) --}}
+            <div class="overflow-hidden rounded-3 shadow-sm mb-5">
+                @if ($post->image)
+                    {{-- w-100 membuat lebar gambar mengikuti container, object-fit:cover agar tidak gepeng --}}
+                    <img src="{{ asset('storage/' . $post->image) }}" 
+                         alt="{{ $post->category->name }}" 
+                         class="img-fluid w-100" 
+                         style="max-height: 450px; object-fit: cover; object-position: center;">
+                @else
+                    <img src="https://source.unsplash.com/1200x500?{{ $post->category->name }}" 
+                         alt="{{ $post->category->name }}" 
+                         class="img-fluid w-100" 
+                         style="max-height: 450px; object-fit: cover;">
+                @endif
+            </div>
+            
+            {{-- Isi Artikel --}}
+            {{-- lh-lg: Line Height Large (jarak antar baris lega) --}}
+            <article class="my-3 fs-5 lh-lg text-break">
+                   {!! $post->body !!} 
+            </article>   
 
+            {{-- Navigasi Bawah --}}
+            <div class="mt-5 pt-4 border-top">
+                <p class="text-muted fst-italic mb-2">Terima kasih sudah membaca!</p>
+                <a href="/posts" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Kembali ke Daftar Postingan
+                </a>
+            </div>
 
-
-    <a href="/posts" class="display-block mt-3">Back To posts</a>
         </div> 
-        </div>
     </div>
+</div>
 
-
-
-    
 @endsection

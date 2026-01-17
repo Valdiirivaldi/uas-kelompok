@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     @return void
+     * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->string('title');
             $table->string('slug')->unique();
+            $table->string('image')->nullable(); // <-- INI YANG WAJIB ADA
             $table->text('excerpt');
             $table->text('body');
             $table->timestamp('published_at')->nullable();
