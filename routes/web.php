@@ -2,6 +2,7 @@
 
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Comment;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
@@ -40,7 +41,7 @@ Route::get('/categories', function() {
 });
 
 
-// --- 2. HALAMAN AUTH ---
+// --- 2. HALAMAN AUTH (Login & Register) ---
 Route::get('/login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/logout', [LoginController::class, 'logout']);
@@ -52,31 +53,34 @@ Route::post('/register', [RegisterController::class, 'store']);
 // --- 3. HALAMAN DASHBOARD (User & Admin) ---
 Route::middleware(['auth'])->group(function() {
     
-    // PERBAIKAN DI SINI: Mengirim variabel statistik ke dashboard
+    // Route Utama Dashboard - Mengirim data statistik & komentar terbaru
     Route::get('/dashboard', function() {
-        return view('dashboard.index', [
-            'posts_count' => Post::where('user_id', auth()->user()->id)->count(),
-            'categories_count' => Category::count(),
-            'users_count' => User::count()
-        ]);
+     return view('dashboard.index', [
+        'posts_count' => Post::where('user_id', auth()->user()->id)->count(),
+        'total_posts_count' => Post::count(), // Variabel baru untuk Admin
+        'categories_count' => Category::count(),
+        'users_count' => User::count(),
+        'recent_comments' => Comment::with(['user', 'post'])->latest()->take(5)->get()
+    ]);
     });
 
+    // Fitur Postingan Dashboard
     Route::get('/dashboard/posts/checkSlug', [DashboardPostController::class, 'checkSlug']);
     Route::resource('/dashboard/posts', DashboardPostController::class);
+    
+    // Fitur Komentar & Profile
+    Route::post('/comment', [CommentController::class, 'store']);
+    Route::get('/dashboard/profile', [DashboardProfileController::class, 'index']);
+    Route::put('/dashboard/profile', [DashboardProfileController::class, 'update']);
 });
-Route::post('/comment', [CommentController::class, 'store'])->middleware('auth');
-Route::get('/dashboard', [DashboardPostController::class, 'index'])->middleware('auth');
 
-// Route untuk resource posts tetap biarkan seperti ini:
-Route::resource('/dashboard/posts', DashboardPostController::class)->middleware('auth');
-// --- 4. HALAMAN KHUSUS ADMIN ---
+
+// --- 4. HALAMAN KHUSUS ADMIN (Middleware Admin) ---
 Route::middleware(['admin'])->group(function() {
+    // Kelola Kategori
     Route::get('/dashboard/categories/checkSlug', [AdminCategoryController::class, 'checkSlug']);
     Route::resource('/dashboard/categories', AdminCategoryController::class)->except('show');
     
-    // Resource User Management
+    // Kelola User
     Route::resource('/dashboard/users', AdminUserController::class)->only(['index', 'destroy', 'update']);
-    Route::get('/dashboard/profile', [DashboardProfileController::class, 'index'])->middleware('auth');
-Route::put('/dashboard/profile', [DashboardProfileController::class, 'update'])->middleware('auth');
-
 });
