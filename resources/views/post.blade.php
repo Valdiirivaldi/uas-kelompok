@@ -105,7 +105,7 @@
 
         <hr class="my-5">
 
-        {{-- Bagian Komentar --}}
+        {{-- FITUR COMMENT --}}
         <section id="comments">
             <h4 class="fw-bold mb-4">Comments ({{ $post->comments->count() }})</h4>
 
