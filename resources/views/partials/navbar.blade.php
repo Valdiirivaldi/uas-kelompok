@@ -19,25 +19,25 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link px-3 d-inline-flex align-items-center {{ ($active ?? '') === 'home' ? 'active fw-semibold' : '' }}" href="/">
-            <i class="fa-regular fa-house-chimney me-2"></i> 
+            <i class="fa-solid fa-house me-2"></i> 
             <span>Home</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link px-3 d-inline-flex align-items-center {{ ($active ?? '') === 'about' ? 'active fw-semibold' : '' }}" href="/about">
-            <i class="fa-regular fa-circle-info me-2"></i> 
+            <i class="fa-solid fa-circle-info me-2"></i> 
             <span>About</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link px-3 d-inline-flex align-items-center {{ ($active ?? '') === 'posts' ? 'active fw-semibold' : '' }}" href="/posts">
-            <i class="fa-regular fa-newspaper me-2"></i> 
+            <i class="fa-solid fa-newspaper me-2"></i> 
             <span>Blog</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link px-3 d-inline-flex align-items-center {{ ($active ?? '') === 'categories' ? 'active fw-semibold' : '' }}" href="/categories">
-            <i class="fa-regular fa-layer-group me-2"></i> 
+            <i class="fa-solid fa-layer-group me-2"></i> 
             <span>Categories</span>
           </a>
         </li>
@@ -112,28 +112,29 @@
 
 {{-- CSS Tambahan --}}
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-
     nav {
         font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
-    /* Penyelarasan Ikon dan Teks di Tengah Vertikal */
+    /* Memaksa Link Navigasi berada di tengah vertikal */
     .navbar-nav .nav-link {
         display: inline-flex !important;
-        align-items: center;
+        align-items: center; 
+        justify-content: center;
         color: rgba(255,255,255,0.7) !important;
         transition: all 0.3s ease;
         position: relative;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
+        padding-top: 8px;
+        padding-bottom: 8px;
     }
     
-    /* Reset Margin Ikon agar tidak offset */
+    /* Penyelarasan Ikon */
     .navbar-nav .nav-link i {
-        font-size: 0.95rem;
-        line-height: 0;
-        margin-top: -1px; /* Micro-adjustment untuk balance visual */
+        font-size: 0.9rem;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        margin-top: 1px; /* Koreksi optik agar sejajar teks */
     }
 
     .navbar-nav .nav-link:hover, 
@@ -141,14 +142,14 @@
         color: #ffffff !important;
     }
 
-    /* Garis bawah animasi yang presisi */
+    /* Garis Bawah yang sejajar dengan Container Navigasi */
     @media (min-width: 992px) {
         .navbar-nav .nav-link::after {
             content: '';
             position: absolute;
             width: 0;
             height: 2px;
-            bottom: -5px; /* Jarak dari teks ke garis */
+            bottom: -5px; 
             left: 50%;
             background-color: #3b82f6;
             transition: all 0.3s ease;
@@ -162,24 +163,17 @@
         }
     }
 
-    /* Dropdown Styling */
+    /* Dropdown Animation */
     .dropdown-menu.animate-slide {
         display: block !important;
         opacity: 0;
         visibility: hidden;
         transform: translateY(15px);
         transition: all 0.2s ease-in-out;
-        pointer-events: none;
     }
     .dropdown-menu.show {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
-        pointer-events: auto;
-    }
-
-    .dropdown-item:hover {
-        background-color: #f8fafc !important;
-        transform: translateX(5px);
     }
 </style>
