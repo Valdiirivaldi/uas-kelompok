@@ -33,7 +33,7 @@
 <div class="container py-5">
     <div class="post-container">
         
-        {{-- Tombol Kembali --}}
+        {{-- Tombol Kembali/Back --}}
         <div class="mb-4">
             <a href="/posts" class="text-decoration-none text-muted small">
                 <i class="bi bi-arrow-left"></i> BACK TO POSTS
