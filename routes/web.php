@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Post;
+use App\Models\User;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
@@ -7,7 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DashboardPostController;
-use App\Http\Controllers\AdminCategoryController; // Pastikan controller ini ada nanti
+use App\Http\Controllers\AdminCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,19 +17,13 @@ use App\Http\Controllers\AdminCategoryController; // Pastikan controller ini ada
 |--------------------------------------------------------------------------
 */
 
-// --- 1. HALAMAN PUBLIC (Bisa diakses tanpa login) ---
+// --- 1. HALAMAN PUBLIC ---
 Route::get('/', function () {
-    return view('home', [
-        "title" => "Home",
-        "active" => "home"
-    ]);
+    return view('home', ["title" => "Home", "active" => "home"]);
 });
 
 Route::get('/about', function () {
-    return view('about', [
-        "title" => "About",
-        "active" => "about"
-    ]);
+    return view('about', ["title" => "About", "active" => "about"]);
 });
 
 Route::get('/posts', [PostController::class, 'index']);
@@ -42,7 +38,7 @@ Route::get('/categories', function() {
 });
 
 
-// --- 2. HALAMAN AUTH (Login & Register) ---
+// --- 2. HALAMAN AUTH ---
 Route::get('/login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/logout', [LoginController::class, 'logout']);
@@ -51,26 +47,28 @@ Route::get('/register', [RegisterController::class, 'index'])->middleware('guest
 Route::post('/register', [RegisterController::class, 'store']);
 
 
-// --- 3. HALAMAN DASHBOARD (Hanya untuk User yang sudah Login) ---
+// --- 3. HALAMAN DASHBOARD (User & Admin) ---
 Route::middleware(['auth'])->group(function() {
     
-    // Halaman Utama Dashboard
+    // PERBAIKAN DI SINI: Mengirim variabel statistik ke dashboard
     Route::get('/dashboard', function() {
-        return view('dashboard.index');
+        return view('dashboard.index', [
+            'posts_count' => Post::where('user_id', auth()->user()->id)->count(),
+            'categories_count' => Category::count(),
+            'users_count' => User::count()
+        ]);
     });
 
-    // Fitur Kelola Post (Untuk User Biasa/Author & Admin)
     Route::get('/dashboard/posts/checkSlug', [DashboardPostController::class, 'checkSlug']);
     Route::resource('/dashboard/posts', DashboardPostController::class);
-
 });
 
 
-// --- 4. HALAMAN KHUSUS ADMIN (Hanya is_admin = 1) ---
+// --- 4. HALAMAN KHUSUS ADMIN ---
 Route::middleware(['admin'])->group(function() {
     Route::get('/dashboard/categories/checkSlug', [AdminCategoryController::class, 'checkSlug']);
     Route::resource('/dashboard/categories', AdminCategoryController::class)->except('show');
     
-    // Gabungkan menjadi satu baris ini saja:
+    // Resource User Management
     Route::resource('/dashboard/users', AdminUserController::class)->only(['index', 'destroy', 'update']);
 });

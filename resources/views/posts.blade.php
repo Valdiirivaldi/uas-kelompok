@@ -2,30 +2,30 @@
 
 @section('container')
 <style>
-    /* 1. Memberikan warna background abu-abu muda pada body agar Card Putih menonjol */
+    /* 1. Memberikan warna background abu-abu muda agar Card Putih menonjol */
     body {
         background-color: #f4f6f9 !important;
     }
 
     /* 2. Styling Card Utama */
     .card {
-        background-color: #ffffff; /* Pastikan card putih bersih */
-        border: 1px solid rgba(0, 0, 0, 0.05); /* Garis tepi tipis banget */
-        border-radius: 12px; /* Sudut membulat */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Bayangan halus */
+        background-color: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
         height: 100%;
         overflow: hidden;
     }
 
-    /* 3. Efek Hover: Card naik sedikit + bayangan menebal */
+    /* 3. Efek Hover */
     .card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         border-color: rgba(0, 0, 0, 0.1);
     }
 
-    /* 4. Mengatur Gambar Grid agar tidak gepeng */
+    /* 4. Mengatur Gambar Grid */
     .card-img-top {
         width: 100%;
         height: 250px;
@@ -33,7 +33,7 @@
         object-position: center;
     }
 
-    /* 5. Mengatur Gambar Hero (Paling Atas) */
+    /* 5. Mengatur Gambar Hero */
     .hero-img {
         width: 100%;
         height: 400px;
@@ -45,10 +45,11 @@
     /* 6. Badge Kategori */
     .category-badge {
         background-color: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(5px); /* Efek blur kaca */
+        backdrop-filter: blur(5px);
         border-radius: 0 0 10px 0;
         font-size: 0.85rem;
         letter-spacing: 0.5px;
+        z-index: 2;
     }
 
     .btn-primary {
@@ -84,8 +85,8 @@
     </div>
 
    @if ($posts->count())
-    {{-- HERO POST (Postingan Utama) --}}
-    <div class="card mb-5 border-0">
+    {{-- HERO POST (Postingan Paling Baru) --}}
+    <div class="card mb-5 border-0 shadow-lg">
         @if ($posts[0]->image)
             <img src="{{ asset('storage/' . $posts[0]->image) }}" class="card-img-top hero-img" alt="{{ $posts[0]->category->name }}">
         @else
@@ -104,12 +105,13 @@
                     • {{ $posts[0]->created_at->diffForHumans() }}
                 </small>
             </p>
-            <p class="card-text px-md-5 text-muted">{{ $posts[0]->excerpt }}</p>
+            {{-- Menggunakan strip_tags agar karakter &nbsp; atau tag HTML hilang --}}
+            <p class="card-text px-md-5 text-muted">{{ Str::limit(strip_tags($posts[0]->body), 200) }}</p>
             <a href="/posts/{{ $posts[0]->slug }}" class="btn btn-primary mt-3 px-4">Read more</a>
         </div>
     </div>
 
-    {{-- GRID POSTS (Postingan Lainnya) --}}
+    {{-- GRID POSTS --}}
     <div class="container p-0">
         <div class="row">
             @foreach ($posts->skip(1) as $post)
@@ -127,7 +129,6 @@
                         <img src="https://source.unsplash.com/500x400?{{ $post->category->name }}" class="card-img-top" alt="{{ $post->category->name }}">
                     @endif
                     
-                    {{-- Body Card --}}
                     <div class="card-body d-flex flex-column p-4">
                         <h5 class="card-title fw-bold mb-3">
                             <a href="/posts/{{ $post->slug }}" class="text-decoration-none text-dark">{{ $post->title }}</a>
@@ -143,7 +144,8 @@
                             </small>
                         </p>
 
-                        <p class="card-text text-secondary small flex-grow-1">{{ Str::limit($post->excerpt, 100) }}</p>
+                        {{-- Perbaikan teks deskripsi grid --}}
+                        <p class="card-text text-secondary small flex-grow-1">{{ Str::limit(strip_tags($post->body), 100) }}</p>
                         
                         <a href="/posts/{{ $post->slug }}" class="btn btn-outline-primary mt-auto w-100 fw-bold">Read more</a>
                     </div>
