@@ -76,7 +76,7 @@
             </div>
         </header>
 
-        {{-- Gambar Utama --}}
+        {{-- Gambar Utama/Main --}}
         <div class="hero-wrapper shadow-sm">
             @if ($post->image)
                 <img src="{{ asset('storage/' . $post->image) }}" class="hero-img">
