@@ -6,6 +6,8 @@ use App\Models\Post;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Models\User;    // TAMBAHKAN INI
+use App\Models\Comment;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 
@@ -14,13 +16,18 @@ class DashboardPostController extends Controller
     /**
      * Menampilkan daftar post (READ)
      */
-    public function index()
-    {
-        return view('dashboard.posts.index', [
-            'posts' => Post::where('user_id', auth()->user()->id)->get()
-        ]);
-    }
-
+public function index()
+{
+    return view('dashboard.index', [
+        'posts_count' => Post::where('user_id', auth()->user()->id)->count(),
+        'categories_count' => Category::count(),
+        'users_count' => User::count(),
+        // Ambil 5 komentar terbaru untuk post milik user yang sedang login
+        'recent_comments' => Comment::whereHas('post', function($query) {
+            $query->where('user_id', auth()->user()->id);
+        })->with(['user', 'post'])->latest()->take(5)->get()
+    ]);
+}
     /**
      * Menampilkan form create (CREATE - View)
      */

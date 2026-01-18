@@ -64,7 +64,10 @@ Route::middleware(['auth'])->group(function() {
     Route::resource('/dashboard/posts', DashboardPostController::class);
 });
 Route::post('/comment', [CommentController::class, 'store'])->middleware('auth');
+Route::get('/dashboard', [DashboardPostController::class, 'index'])->middleware('auth');
 
+// Route untuk resource posts tetap biarkan seperti ini:
+Route::resource('/dashboard/posts', DashboardPostController::class)->middleware('auth');
 // --- 4. HALAMAN KHUSUS ADMIN ---
 Route::middleware(['admin'])->group(function() {
     Route::get('/dashboard/categories/checkSlug', [AdminCategoryController::class, 'checkSlug']);
