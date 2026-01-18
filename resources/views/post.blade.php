@@ -1,51 +1,109 @@
 @extends('layouts.main')
 
 @section('container')
-<div class="container">
-    <div class="row justify-content-center mb-5">
-        <div class="col-md-8">
+<style>
+    /* Tipografi & Layout Minimalis */
+    .post-container { max-width: 800px; margin: auto; }
+    .post-body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.8; color: #212529; font-size: 1.15rem; }
+    .post-body p { margin-bottom: 1.5rem; }
+    
+    /* Hero Image */
+    .hero-wrapper { border-radius: 15px; overflow: hidden; margin-bottom: 3rem; }
+    .hero-img { width: 100%; height: auto; object-fit: cover; }
+
+    /* Comment Section Clean */
+    .comment-card { border: none; border-bottom: 1px solid #f0f0f0; padding: 1.5rem 0; }
+    .comment-card:last-child { border-bottom: none; }
+    .comment-input { border: 1px solid #dee2e6; border-radius: 10px; padding: 1rem; background-color: #f8f9fa; }
+    .comment-input:focus { background-color: #fff; border-color: #0d6efd; box-shadow: none; }
+    
+    .meta-text { font-size: 0.9rem; color: #6c757d; }
+</style>
+
+<div class="container py-5">
+    <div class="post-container">
+        
+        {{-- Tombol Kembali --}}
+        <div class="mb-4">
+            <a href="/posts" class="text-decoration-none text-muted small">
+                <i class="bi bi-arrow-left"></i> BACK TO POSTS
+            </a>
+        </div>
+
+        {{-- Header Artikel --}}
+        <header class="mb-5">
+            <h1 class="fw-bold mb-3" style="line-height: 1.2;">{{ $post->title }}</h1>
             
-            <div class="mb-4">
-                 <a href="/posts" class="text-decoration-none text-secondary">
-                    <i class="bi bi-arrow-left"></i> Back to posts
-                 </a>
+            <div class="d-flex align-items-center py-3 border-bottom border-top">
+                <img src="https://ui-avatars.com/api/?name={{ urlencode($post->author->name) }}&background=0D6EFD&color=fff" class="rounded-circle me-3" width="45" height="45">
+                <div>
+                    <span class="meta-text d-block">
+                        By <a href="/posts?author={{ $post->author->username }}" class="text-decoration-none fw-bold text-dark">{{ $post->author?->name ?? 'Admin' }}</a> 
+                        in <a href="/posts?category={{ $post->category->slug }}" class="text-decoration-none fw-bold text-primary">{{ $post->category->name }}</a>
+                    </span>
+                    <span class="meta-text">{{ $post->created_at->format('d F Y') }}</span>
+                </div>
             </div>
+        </header>
 
-            <h1 class="mb-3 fw-bold display-5">{{ $post->title }}</h1>
-            
-            <div class="d-flex align-items-center mb-4 text-muted border-bottom pb-3">
-                <span class="me-2">By</span>
-                <a href="/posts?author={{ $post->author->username }}" class="text-decoration-none fw-bold text-dark me-2">
-                    {{ $post->author?->name ?? 'Admin' }}
-                </a> 
-                <span class="me-2">in</span> 
-                <a href="/posts?category={{ $post->category->slug }}" class="badge bg-primary text-decoration-none">
-                    {{ $post->category->name }}
-                </a>
-                <span class="mx-2">•</span> 
-                <span>{{ $post->created_at->format('d F Y') }}</span>
+        {{-- Gambar Utama --}}
+        <div class="hero-wrapper shadow-sm">
+            @if ($post->image)
+                <img src="{{ asset('storage/' . $post->image) }}" class="hero-img">
+            @else
+                <img src="https://picsum.photos/seed/{{ $post->id }}/1200/700" class="hero-img">
+            @endif
+        </div>
+        
+        {{-- Konten Artikel --}}
+        <article class="post-body mb-5">
+               {!! $post->body !!} 
+        </article>
+
+        <hr class="my-5">
+
+        {{-- Bagian Komentar --}}
+        <section id="comments">
+            <h4 class="fw-bold mb-4">Comments ({{ $post->comments->count() }})</h4>
+
+            @auth
+            <div class="mb-5">
+                <form action="/comment" method="post">
+                    @csrf
+                    <input type="hidden" name="post_id" value="{{ $post->id }}">
+                    <div class="mb-3">
+                        <textarea class="form-control comment-input shadow-none" name="body" rows="3" placeholder="Write a comment..." required></textarea>
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary px-4 fw-bold">Post Comment</button>
+                    </div>
+                </form>
             </div>
-
-            <div class="overflow-hidden rounded-4 shadow-sm mb-5">
-                @if ($post->image)
-                    <img src="{{ asset('storage/' . $post->image) }}" class="img-fluid w-100" style="max-height: 500px; object-fit: cover;">
-                @else
-                    <img src="https://picsum.photos/seed/{{ $post->category->name }}/1200/500" class="img-fluid w-100" style="max-height: 500px; object-fit: cover;">
-                @endif
+            @else
+            <div class="alert alert-light border rounded-3 text-center mb-5">
+                Please <a href="/login" class="fw-bold">Login</a> to join the conversation.
             </div>
-            
-            <article class="my-3 fs-5 lh-lg text-break">
-                   {!! $post->body !!} 
-            </article>   
+            @endauth
 
-            <div class="mt-5 pt-4 border-top">
-                <p class="text-muted fst-italic mb-2">Terima kasih sudah membaca!</p>
-                <a href="/posts" class="btn btn-outline-primary">
-                    <i class="bi bi-arrow-left"></i> Kembali ke Daftar
-                </a>
+            <div class="comment-list pb-5">
+                @forelse ($post->comments->sortByDesc('created_at') as $comment)
+                <div class="comment-card">
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name) }}&background=6c757d&color=fff" 
+                             class="rounded-circle me-2" width="35" height="35">
+                        <span class="fw-bold text-dark me-2" style="font-size: 0.95rem;">{{ $comment->user->name }}</span>
+                        <small class="text-muted" style="font-size: 0.8rem;">{{ $comment->created_at->diffForHumans() }}</small>
+                    </div>
+                    <div class="ps-1 text-secondary" style="line-height: 1.5;">
+                        {{ $comment->body }}
+                    </div>
+                </div>
+                @empty
+                <p class="text-center text-muted">No comments yet.</p>
+                @endforelse
             </div>
+        </section>
 
-        </div> 
-    </div>
+    </div> 
 </div>
 @endsection
