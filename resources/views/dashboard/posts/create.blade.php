@@ -6,7 +6,6 @@
 </div>
 
 <div class="col-lg-8">
-    {{-- PENTING: enctype="multipart/form-data" wajib ada supaya bisa upload gambar --}}
     <form method="post" action="/dashboard/posts" class="mb-5" enctype="multipart/form-data">
         @csrf
         
@@ -15,20 +14,16 @@
           <label for="title" class="form-label">Title</label>
           <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" required autofocus value="{{ old('title') }}">
           @error('title')
-            <div class="invalid-feedback">
-              {{ $message }}
-            </div>
+            <div class="invalid-feedback">{{ $message }}</div>
           @enderror
         </div>
 
-        {{-- Slug (Otomatis terisi lewat Javascript di bawah) --}}
+        {{-- Slug --}}
         <div class="mb-3">
           <label for="slug" class="form-label">Slug</label>
           <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug" name="slug" required value="{{ old('slug') }}">
           @error('slug')
-            <div class="invalid-feedback">
-              {{ $message }}
-            </div>
+            <div class="invalid-feedback">{{ $message }}</div>
           @enderror
         </div>
 
@@ -37,11 +32,9 @@
           <label for="category" class="form-label">Category</label>
           <select class="form-select" name="category_id">
             @foreach ($categories as $category)
-                @if(old('category_id') == $category->id)
-                    <option value="{{ $category->id }}" selected>{{ $category->name }}</option>
-                @else
-                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                @endif
+                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
             @endforeach
           </select>
         </div>
@@ -49,23 +42,20 @@
         {{-- Image Upload --}}
         <div class="mb-3">
             <label for="image" class="form-label">Post Image</label>
-            {{-- Tag img kosong untuk preview --}}
-            <img class="img-preview img-fluid mb-3 col-sm-5">
+            {{-- Default placeholder jika belum pilih gambar --}}
+            <img class="img-preview img-fluid mb-3 col-sm-5 d-block" src="{{ asset('img/icon.png') }}">
             <input class="form-control @error('image') is-invalid @enderror" type="file" id="image" name="image" onchange="previewImage()">
             @error('image')
-            <div class="invalid-feedback">
-              {{ $message }}
-            </div>
-          @enderror
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
-        {{-- Body (Menggunakan Trix Editor) --}}
+        {{-- Body (Trix Editor) --}}
         <div class="mb-3">
           <label for="body" class="form-label">Body</label>
           @error('body')
-             <p class="text-danger">{{ $message }}</p>
+             <p class="text-danger small">{{ $message }}</p>
           @enderror
-          
           <input id="body" type="hidden" name="body" value="{{ old('body') }}">
           <trix-editor input="body"></trix-editor>
         </div>
@@ -75,7 +65,6 @@
 </div>
 
 <script>
-    // 1. Script Fetch Slug (Agar slug otomatis terisi saat ngetik title)
     const title = document.querySelector('#title');
     const slug = document.querySelector('#slug');
 
@@ -85,17 +74,13 @@
             .then(data => slug.value = data.slug)
     });
 
-    // 2. Trix Editor Config (Mematikan fitur upload file di body supaya server gak penuh)
     document.addEventListener('trix-file-accept', function(e) {
         e.preventDefault();
     })
 
-    // 3. Script Preview Image
     function previewImage() {
         const image = document.querySelector('#image');
         const imgPreview = document.querySelector('.img-preview');
-
-        imgPreview.style.display = 'block';
 
         const oFReader = new FileReader();
         oFReader.readAsDataURL(image.files[0]);

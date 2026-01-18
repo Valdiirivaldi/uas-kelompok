@@ -9,7 +9,7 @@ use App\Models\User;
 
 class PostController extends Controller
 {
-  public function index()
+    public function index()
     {
         $title = '';
         if(request('category')){
@@ -20,14 +20,17 @@ class PostController extends Controller
             $author = User::firstWhere('username', request('author'));
             $title = ' by ' . $author->name;
         }
-        return view('posts',[
-            "title" => "All Posts". $title,
-            "active" => "posts",
-            "posts" => Post::latest()->filter(request(['search', 'category','author']))->paginate(7)->withQueryString()
-        ]);
+
+       return view('posts',[
+        "title" => "All Posts". $title,
+        "active" => "posts",
+        // Ubah menjadi 10 agar Halaman 1 benar-benar FULL (1 Hero + 9 Grid)
+        "posts" => Post::latest()->filter(request(['search', 'category','author']))
+                    ->paginate(10)->withQueryString()
+    ]);
     }
 
-  public function show(Post $post)
+    public function show(Post $post)
     {
         return view('post',[
             "title" => "Single Post",
@@ -36,3 +39,4 @@ class PostController extends Controller
         ]);
     }
 }
+    
