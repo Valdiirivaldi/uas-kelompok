@@ -6,7 +6,7 @@
     <div class="col-lg-6 order-2 order-lg-1">
         <h1 class="display-4 fw-bold lh-1 mb-3 text-dark">Welcome to <span class="text-primary">UAS BLOG</span></h1>
         <p class="lead text-secondary mb-4">
-            Tempat berbagi wawasan, tutorial koding, dan cerita menarik seputar dunia teknologi. 
+            Tempat berbagi wawasan, DIY, dan berita menarik terkini. 
             Jelajahi artikel menarik yang telah kami siapkan.
         </p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
