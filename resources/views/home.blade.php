@@ -11,7 +11,7 @@
         </p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
             <a href="/posts" class="btn btn-primary btn-lg px-4 me-md-2 rounded-pill shadow-sm">Mulai Membaca</a>
-            <a href="/about" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">Tentang Kami</a>
+            <a href="/about" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">About Us</a>
         </div>
     </div>
     <div class="col-lg-6 order-1 order-lg-2 mb-5 mb-lg-0 text-center">
