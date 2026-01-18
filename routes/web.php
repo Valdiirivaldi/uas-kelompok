@@ -2,9 +2,11 @@
 
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Like;
 use App\Models\Comment;
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\CommentController;
@@ -50,23 +52,43 @@ Route::get('/register', [RegisterController::class, 'index'])->middleware('guest
 Route::post('/register', [RegisterController::class, 'store']);
 
 
-// --- 3. HALAMAN DASHBOARD (User & Admin) ---
+// --- 3. HALAMAN DASHBOARD (Authenticated Users) ---
 Route::middleware(['auth'])->group(function() {
     
-    // Route Utama Dashboard - Mengirim data statistik & komentar terbaru
+    // Route Utama Dashboard dengan Logika Privat Komentar
     Route::get('/dashboard', function() {
-     return view('dashboard.index', [
-        'posts_count' => Post::where('user_id', auth()->user()->id)->count(),
-        'total_posts_count' => Post::count(), // Variabel baru untuk Admin
-        'categories_count' => Category::count(),
-        'users_count' => User::count(),
-        'recent_comments' => Comment::with(['user', 'post'])->latest()->take(5)->get()
-    ]);
+        $user = auth()->user();
+        $user_posts = Post::where('user_id', $user->id);
+        
+        // Logika membedakan komentar untuk Admin vs User Biasa
+        if($user->is_admin) {
+            // Admin melihat 5 komentar terbaru dari siapapun
+            $recent_comments = Comment::with(['user', 'post'])->latest()->take(5)->get();
+        } else {
+            // User biasa hanya melihat 5 komentar yang masuk ke postingan miliknya saja
+            $recent_comments = Comment::with(['user', 'post'])
+                ->whereIn('post_id', $user_posts->pluck('id'))
+                ->latest()
+                ->take(5)
+                ->get();
+        }
+
+        return view('dashboard.index', [
+            'posts_count' => $user_posts->count(),
+            'total_likes' => Like::whereIn('post_id', $user_posts->pluck('id'))->count(),
+            'total_posts_count' => Post::count(),
+            'categories_count' => Category::count(),
+            'users_count' => User::count(),
+            'recent_comments' => $recent_comments
+        ]);
     });
 
     // Fitur Postingan Dashboard
     Route::get('/dashboard/posts/checkSlug', [DashboardPostController::class, 'checkSlug']);
     Route::resource('/dashboard/posts', DashboardPostController::class);
+    
+    // Fitur Like (Bisa dilakukan semua user yang login)
+    Route::post('/post/{post:slug}/like', [LikeController::class, 'toggle']);
     
     // Fitur Komentar & Profile
     Route::post('/comment', [CommentController::class, 'store']);

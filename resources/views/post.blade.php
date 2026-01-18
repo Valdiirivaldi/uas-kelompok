@@ -18,6 +18,16 @@
     .comment-input:focus { background-color: #fff; border-color: #0d6efd; box-shadow: none; }
     
     .meta-text { font-size: 0.9rem; color: #6c757d; }
+
+    /* Custom Like Button */
+    .btn-like {
+        transition: all 0.3s ease;
+        border-radius: 50px;
+        padding: 8px 20px;
+        font-weight: 600;
+    }
+    .btn-like:hover { transform: translateY(-2px); }
+    .fill-red { fill: #dc3545; color: #dc3545 !important; }
 </style>
 
 <div class="container py-5">
@@ -34,14 +44,34 @@
         <header class="mb-5">
             <h1 class="fw-bold mb-3" style="line-height: 1.2;">{{ $post->title }}</h1>
             
-            <div class="d-flex align-items-center py-3 border-bottom border-top">
-                <img src="https://ui-avatars.com/api/?name={{ urlencode($post->author->name) }}&background=0D6EFD&color=fff" class="rounded-circle me-3" width="45" height="45">
+            <div class="d-flex align-items-center py-3 border-bottom border-top justify-content-between">
+                <div class="d-flex align-items-center">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode($post->author->name) }}&background=0D6EFD&color=fff" class="rounded-circle me-3" width="45" height="45">
+                    <div>
+                        <span class="meta-text d-block">
+                            By <a href="/posts?author={{ $post->author->username }}" class="text-decoration-none fw-bold text-dark">{{ $post->author?->name ?? 'Admin' }}</a> 
+                            in <a href="/posts?category={{ $post->category->slug }}" class="text-decoration-none fw-bold text-primary">{{ $post->category->name }}</a>
+                        </span>
+                        <span class="meta-text">{{ $post->created_at->format('d F Y') }}</span>
+                    </div>
+                </div>
+
+                {{-- FITUR LIKE (Header Version) --}}
                 <div>
-                    <span class="meta-text d-block">
-                        By <a href="/posts?author={{ $post->author->username }}" class="text-decoration-none fw-bold text-dark">{{ $post->author?->name ?? 'Admin' }}</a> 
-                        in <a href="/posts?category={{ $post->category->slug }}" class="text-decoration-none fw-bold text-primary">{{ $post->category->name }}</a>
-                    </span>
-                    <span class="meta-text">{{ $post->created_at->format('d F Y') }}</span>
+                    @auth
+                        <form action="/post/{{ $post->slug }}/like" method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-like {{ $post->isLikedBy(auth()->user()) ? 'btn-danger text-white' : 'btn-outline-danger' }}">
+                                <i data-feather="heart" class="{{ $post->isLikedBy(auth()->user()) ? 'fill-current' : '' }}" style="width: 18px; height: 18px;"></i>
+                                <span class="ms-1 small">{{ $post->likes->count() }}</span>
+                            </button>
+                        </form>
+                    @else
+                        <a href="/login" class="btn btn-like btn-outline-danger">
+                            <i data-feather="heart" style="width: 18px; height: 18px;"></i>
+                            <span class="ms-1 small">{{ $post->likes->count() }}</span>
+                        </a>
+                    @endauth
                 </div>
             </div>
         </header>
@@ -59,6 +89,19 @@
         <article class="post-body mb-5">
                {!! $post->body !!} 
         </article>
+
+        {{-- FITUR LIKE (Bottom Version - Opsional) --}}
+        <div class="d-flex justify-content-center my-5">
+            @auth
+                <form action="/post/{{ $post->slug }}/like" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-lg btn-like shadow-sm {{ $post->isLikedBy(auth()->user()) ? 'btn-danger text-white' : 'btn-outline-danger' }}">
+                        <i data-feather="heart" style="width: 24px; height: 24px;"></i> 
+                        Sukai Artikel Ini ({{ $post->likes->count() }})
+                    </button>
+                </form>
+            @endauth
+        </div>
 
         <hr class="my-5">
 
@@ -106,4 +149,11 @@
 
     </div> 
 </div>
+
+{{-- Script Feather Icons (Jika belum ada di layout main) --}}
+<script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"></script>
+<script>
+  feather.replace()
+</script>
+
 @endsection

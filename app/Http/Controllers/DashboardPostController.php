@@ -10,13 +10,16 @@ use Illuminate\Support\Facades\Storage;
 
 class DashboardPostController extends Controller
 {
+    /**
+     * Menampilkan daftar postingan di dashboard.
+     */
     public function index()
     {
         if(auth()->user()->is_admin) {
-            // Admin menarik semua postingan dari semua user
+            // Admin melihat semua postingan
             $posts = Post::with(['category', 'user'])->latest()->get();
         } else {
-            // User biasa hanya menarik postingan miliknya
+            // User biasa melihat postingan sendiri
             $posts = Post::where('user_id', auth()->user()->id)->with(['category'])->latest()->get();
         }
 
@@ -25,11 +28,61 @@ class DashboardPostController extends Controller
         ]);
     }
 
-    // ... (Fungsi store, create, show tetap sama dengan yang kamu miliki)
+    /**
+     * Menampilkan form tambah postingan.
+     */
+    public function create()
+    {
+        return view('dashboard.posts.create', [
+            'categories' => Category::all()
+        ]);
+    }
 
+    /**
+     * Menyimpan postingan baru ke database.
+     */
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'title' => 'required|max:255',
+            'slug' => 'required|unique:posts',
+            'category_id' => 'required',
+            'image' => 'image|file|max:1024',
+            'body' => 'required'
+        ]);
+
+        if($request->file('image')) {
+            $validatedData['image'] = $request->file('image')->store('post-images');
+        }
+
+        $validatedData['user_id'] = auth()->user()->id;
+        $validatedData['excerpt'] = Str::limit(strip_tags($request->body), 200);
+
+        Post::create($validatedData);
+
+        return redirect('/dashboard/posts')->with('success', 'New post has been added!');
+    }
+
+    /**
+     * Menampilkan detail postingan (SOLUSI ERROR TADI).
+     */
+    public function show(Post $post)
+    {
+        // Proteksi akses: Jika bukan admin dan bukan miliknya, maka akses ditolak
+        if(!auth()->user()->is_admin && $post->user_id !== auth()->user()->id) {
+            abort(403);
+        }
+
+        return view('dashboard.posts.show', [
+            'post' => $post
+        ]);
+    }
+
+    /**
+     * Menampilkan form edit postingan.
+     */
     public function edit(Post $post)
     {
-        // Proteksi: Hanya pemilik atau admin yang bisa edit
         if(!auth()->user()->is_admin && $post->user_id !== auth()->user()->id) {
             abort(403);
         }
@@ -40,6 +93,9 @@ class DashboardPostController extends Controller
         ]);
     }
 
+    /**
+     * Memperbarui data postingan di database.
+     */
     public function update(Request $request, Post $post)
     {
         if(!auth()->user()->is_admin && $post->user_id !== auth()->user()->id) {
@@ -47,12 +103,13 @@ class DashboardPostController extends Controller
         }
 
         $rules = [
-            'title'       => 'required|max:255',
+            'title' => 'required|max:255',
             'category_id' => 'required',
-            'image'       => 'image|file|max:1024',
-            'body'        => 'required'
+            'image' => 'image|file|max:1024',
+            'body' => 'required'
         ];
 
+        // Cek jika slug diganti, validasi unique tetap berjalan
         if($request->slug != $post->slug) {
             $rules['slug'] = 'required|unique:posts';
         }
@@ -60,6 +117,7 @@ class DashboardPostController extends Controller
         $validatedData = $request->validate($rules);
 
         if ($request->file('image')) {
+            // Hapus gambar lama jika ada
             if ($post->image) {
                 Storage::delete($post->image);
             }
@@ -73,6 +131,9 @@ class DashboardPostController extends Controller
         return redirect('/dashboard/posts')->with('success', 'Post has been updated!');
     }
 
+    /**
+     * Menghapus postingan.
+     */
     public function destroy(Post $post)
     {
         if(!auth()->user()->is_admin && $post->user_id !== auth()->user()->id) {
@@ -88,6 +149,9 @@ class DashboardPostController extends Controller
         return redirect('/dashboard/posts')->with('success', 'Post has been deleted!');
     }
 
+    /**
+     * Fungsi otomatis generate slug (AJAX).
+     */
     public function checkSlug(Request $request)
     {
         $slug = Str::slug($request->title);

@@ -8,8 +8,8 @@
 
 {{-- Row Kartu Statistik --}}
 <div class="row">
-    {{-- Card My Posts (Selalu Muncul untuk User & Admin) --}}
-    <div class="{{ auth()->user()->is_admin ? 'col-md-3' : 'col-md-4' }} mb-4">
+    {{-- Card My Posts --}}
+    <div class="{{ auth()->user()->is_admin ? 'col-md-4' : 'col-md-6' }} col-lg-3 mb-4">
         <div class="card border-0 shadow-sm text-white h-100" style="background: linear-gradient(45deg, #4e73df, #224abe); border-radius: 15px;">
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center">
@@ -23,24 +23,39 @@
         </div>
     </div>
 
+    {{-- Card Likes Received (Baru) --}}
+    <div class="{{ auth()->user()->is_admin ? 'col-md-4' : 'col-md-6' }} col-lg-3 mb-4">
+        <div class="card border-0 shadow-sm text-white h-100" style="background: linear-gradient(45deg, #e74a3b, #be2617); border-radius: 15px;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase mb-1 small opacity-75 fw-bold">Likes Received</h6>
+                        <h2 class="fw-bold mb-0">{{ $total_likes }}</h2>
+                    </div>
+                    <span data-feather="heart" style="width: 40px; height: 40px; opacity: 0.3; fill: rgba(255,255,255,0.2);"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @if(auth()->user()->is_admin)
     {{-- Card Total All Posts (Hanya Admin) --}}
-    <div class="col-md-3 mb-4">
+    <div class="col-md-4 col-lg-2 mb-4">
         <div class="card border-0 shadow-sm text-white h-100" style="background: linear-gradient(45deg, #f66d9b, #d8336d); border-radius: 15px;">
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-uppercase mb-1 small opacity-75 fw-bold">Total Posts</h6>
-                        <h2 class="fw-bold mb-0">{{ $total_posts_count }}</h2>
+                        <h2 class="fw-bold mb-0 text-truncate" style="max-width: 80px;">{{ $total_posts_count }}</h2>
                     </div>
-                    <span data-feather="layers" style="width: 40px; height: 40px; opacity: 0.3;"></span>
+                    <span data-feather="layers" style="width: 30px; height: 30px; opacity: 0.3;"></span>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Card Total Categories --}}
-    <div class="col-md-3 mb-4">
+    <div class="col-md-6 col-lg-2 mb-4">
         <div class="card border-0 shadow-sm text-white h-100" style="background: linear-gradient(45deg, #1cc88a, #13855c); border-radius: 15px;">
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center">
@@ -48,22 +63,22 @@
                         <h6 class="text-uppercase mb-1 small opacity-75 fw-bold">Categories</h6>
                         <h2 class="fw-bold mb-0">{{ $categories_count }}</h2>
                     </div>
-                    <span data-feather="grid" style="width: 40px; height: 40px; opacity: 0.3;"></span>
+                    <span data-feather="grid" style="width: 30px; height: 30px; opacity: 0.3;"></span>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Card Total Users --}}
-    <div class="col-md-3 mb-4">
+    <div class="col-md-6 col-lg-2 mb-4">
         <div class="card border-0 shadow-sm text-white h-100" style="background: linear-gradient(45deg, #f6c23e, #dda20a); border-radius: 15px;">
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-uppercase mb-1 small opacity-75 fw-bold">Total Users</h6>
+                        <h6 class="text-uppercase mb-1 small opacity-75 fw-bold">Users</h6>
                         <h2 class="fw-bold mb-0">{{ $users_count }}</h2>
                     </div>
-                    <span data-feather="users" style="width: 40px; height: 40px; opacity: 0.3;"></span>
+                    <span data-feather="users" style="width: 30px; height: 30px; opacity: 0.3;"></span>
                 </div>
             </div>
         </div>
@@ -72,7 +87,7 @@
 </div>
 
 {{-- TABEL KOMENTAR TERBARU --}}
-<div class="row mt-4 mb-5">
+<div class="row mt-2 mb-5">
     <div class="col-lg-12">
         <div class="card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden;">
             <div class="card-header bg-white border-0 pt-4 px-4">
@@ -130,7 +145,7 @@
             </div>
             @if($recent_comments->count() > 0)
             <div class="card-footer bg-white border-0 text-center py-3">
-                <small class="text-muted">Menampilkan 5 aktivitas interaksi terbaru</small>
+                <small class="text-muted">Menampilkan aktivitas interaksi terbaru</small>
             </div>
             @endif
         </div>
