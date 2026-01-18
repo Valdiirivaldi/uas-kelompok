@@ -1,22 +1,26 @@
 <!doctype html>
 <html lang="en">
-  <head>
+ <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    {{-- Menggunakan $title atau default 'WPU Blog' jika tidak ada --}}
     <title>{{ $title ?? 'Blog Uas' }}</title>
 
-    {{-- Bootstrap CSS (Versi 5.3.3 Stabil) --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    {{-- Bootstrap CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    {{-- Bootstrap Icons --}}
+    {{-- Google Fonts --}}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+
+    {{-- Cukup Satu Link Font Awesome 6 (Versi All) --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {{-- Cukup Satu Link Bootstrap Icons (Opsional jika masih butuh) --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     {{-- My Style --}}
     <link rel="stylesheet" href="/css/style.css">
-  </head>
+</head>
   <body>
     
     @include('partials.navbar')
