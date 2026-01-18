@@ -83,7 +83,7 @@
         </div>
 
     @else
-        {{-- GRID UNTUK HALAMAN 2, 3, DST --}}
+        {{-- GRID UNTUK HALAMAN 2, 3, 4, DST --}}
         <div class="row">
             @foreach ($posts as $post)
             <div class="col-md-4 mb-4">
