@@ -11,6 +11,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\DashboardPostController;
+use App\Http\Controllers\DashboardProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,4 +76,7 @@ Route::middleware(['admin'])->group(function() {
     
     // Resource User Management
     Route::resource('/dashboard/users', AdminUserController::class)->only(['index', 'destroy', 'update']);
+    Route::get('/dashboard/profile', [DashboardProfileController::class, 'index'])->middleware('auth');
+Route::put('/dashboard/profile', [DashboardProfileController::class, 'update'])->middleware('auth');
+
 });
