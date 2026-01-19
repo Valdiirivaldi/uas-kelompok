@@ -33,7 +33,7 @@
 <div class="container py-5">
     <div class="post-container">
         
-        {{-- Tombol Kembali --}}
+        {{-- Tombol Kembali/Back --}}
         <div class="mb-4">
             <a href="/posts" class="text-decoration-none text-muted small">
                 <i class="bi bi-arrow-left"></i> BACK TO POSTS
@@ -76,7 +76,7 @@
             </div>
         </header>
 
-        {{-- Gambar Utama --}}
+        {{-- Gambar Utama/Main --}}
         <div class="hero-wrapper shadow-sm">
             @if ($post->image)
                 <img src="{{ asset('storage/' . $post->image) }}" class="hero-img">
@@ -105,7 +105,7 @@
 
         <hr class="my-5">
 
-        {{-- Bagian Komentar --}}
+        {{-- FITUR COMMENT --}}
         <section id="comments">
             <h4 class="fw-bold mb-4">Comments ({{ $post->comments->count() }})</h4>
 

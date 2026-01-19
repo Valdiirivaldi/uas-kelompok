@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>UAS Blog | Dashboard</title>
 
-    {{-- Script Pencegah Flash Putih --}}
+    {{-- Script Pencegah Flash Putih (Penting: Harus di atas) --}}
     <script>
         (function() {
             const savedTheme = localStorage.getItem('theme');
@@ -32,7 +32,7 @@
         min-height: 100vh;
         border-right: 1px solid var(--bs-border-color);
         padding-top: 20px;
-        background-color: var(--bs-body-bg); /* Mengikuti tema */
+        background-color: var(--bs-body-bg);
       }
 
       .nav-link {
@@ -78,12 +78,17 @@
         background-color: var(--bs-body-bg);
       }
 
-      /* Trix Editor Fix agar teks terlihat di mode gelap */
+      /* Trix Editor Dark Mode Fix */
       trix-editor {
         background-color: var(--bs-body-bg);
         color: var(--bs-body-color);
       }
       trix-toolbar [data-trix-button-group="file-tools"] { display: none; }
+
+      /* Animasi Ikon */
+      #themeToggle { text-decoration: none; }
+      #themeIcon { transition: transform 0.4s ease; }
+      #themeToggle:hover #themeIcon { transform: rotate(20deg); }
     </style>
   </head>
   <body>
@@ -95,7 +100,6 @@
         @include('dashboard.layouts.sidebar')
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-          {{-- Pastikan tombol toggle ada di header atau bisa ditambah di sini sementara --}}
           <div class="dashboard-card card shadow-sm border-0 p-4">
             @yield('container')
           </div>
@@ -106,14 +110,40 @@
     {{-- JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"></script>
+    
     <script>
         feather.replace();
 
-        // Fungsi bantu untuk update UI jika tombol ganti tema diklik di header
-        function syncTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-bs-theme');
-            // Tambahkan logika tambahan di sini jika dashboard butuh perubahan manual
+        // LOGIKA DARK MODE
+        const btn = document.getElementById('themeToggle');
+        const icon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+
+        // Fungsi Update Ikon
+        function updateIcon(theme) {
+            if (theme === 'dark') {
+                icon.classList.replace('fa-moon', 'fa-sun');
+                icon.style.color = '#ffca28'; // Kuning Matahari
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+                icon.style.color = ''; 
+            }
         }
+
+        // Klik Tombol
+        if(btn) {
+            btn.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                html.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateIcon(newTheme);
+            });
+        }
+
+        // Jalankan saat load untuk set ikon yang benar
+        updateIcon(html.getAttribute('data-bs-theme'));
     </script>
   </body>
 </html>
