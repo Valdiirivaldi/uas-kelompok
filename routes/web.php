@@ -62,11 +62,11 @@ Route::middleware(['auth'])->group(function() {
         
         // Logika membedakan komentar untuk Admin vs User Biasa
         if($user->is_admin) {
-            // Admin melihat 5 komentar terbaru dari siapapun
-            $recent_comments = Comment::with(['user', 'post'])->latest()->take(5)->get();
+            // Admin melihat 5 komentar terbaru (DITAMBAH has('post') agar tidak error)
+            $recent_comments = Comment::has('post')->with(['user', 'post'])->latest()->take(5)->get();
         } else {
-            // User biasa hanya melihat 5 komentar yang masuk ke postingan miliknya saja
-            $recent_comments = Comment::with(['user', 'post'])
+            // User biasa hanya melihat 5 komentar yang masuk ke postingan miliknya saja (DITAMBAH has('post'))
+            $recent_comments = Comment::has('post')->with(['user', 'post'])
                 ->whereIn('post_id', $user_posts->pluck('id'))
                 ->latest()
                 ->take(5)
